@@ -2,11 +2,12 @@ import Github from '@icons/github.svg';
 import Gitlab from '@icons/gitlab.svg';
 import Linkedin from '@icons/linkedin.svg';
 import Twitter from '@icons/twitter.svg';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from './index.module.scss';
 
-export default function Home() {
+export default function Home({ posts }: any) {
   return (
     <div>
       <Head>
@@ -70,6 +71,22 @@ export default function Home() {
           </li>
         </ul>
       </main>
+      {posts.currentFileTime}
     </div>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const res = await fetch('http://worldclockapi.com/api/json/est/now');
+  const posts = await res.json();
+
+  return {
+    props: {
+      posts,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 5, // In seconds
+  };
+};
